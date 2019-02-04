@@ -22,17 +22,19 @@
 class Operator
 {
     public:
-        virtual ~Operator(){
-        }
-        virtual double duration();
+        virtual ~Operator(){ }
+        virtual double duration(){ return -1.0; }
         void set_next(Operator* op){
             next.push_back(op);
+            std::cout<<"set_next: next size="<<next.size()<<std::endl;
         }
         void set_previous(Operator* op){
             previous.push_back(op);
+            std::cout<<"set_pre: pre size="<<previous.size()<<std::endl;
         }
         void set_backtrace(Operator* op){
             backtrace = op;
+            std::cout<<"set_backtrace"<<std::endl;
         }
         std::vector<Operator*> next_list(){
             return next;
@@ -51,10 +53,11 @@ class Operator
         }
         void update(int t=1){//update t times through the linked relation
             if(t<0) return;
-            for(int i=0; i<(int)next.size(); i++){
-                next[i]->get_update(this, highest_duration+duration());
-                if(next[i]->if_motor()){//only update motor operators' next
-                    next[i]->update(t-1);
+            std::cout<<std::endl<<"update"<<next.size()<<" "<<previous.size()<<std::endl;
+            for(auto i:next){
+                i->get_update(this, highest_duration+duration());
+                if(i->if_motor()){//only update motor operators' next
+                    i->update(t-1);
                 }
             }
         }
@@ -66,10 +69,13 @@ class Operator
             }
             return false;
         }
+        virtual std::string content(){
+            return "fucked up";
+        }
 
+        std::vector<Operator*> next = std::vector<Operator*>();
+        std::vector<Operator*> previous = std::vector<Operator*>();
     private:
-        std::vector<Operator*> next;
-        std::vector<Operator*> previous;
         Operator* backtrace = nullptr;
         double highest_duration=0.0;
 };
@@ -85,6 +91,9 @@ class PerceptualOperator: public Operator
         PerceptualOperator(std::string word, double duration=340.0){
             chunck = word;
             Real_duration = duration;
+        }
+        std::string content(){
+            return type+":"+chunck;
         }
     private:
         double Real_duration = 340.0;
@@ -104,6 +113,9 @@ class RecognitiveOperator: public Operator
         RecognitiveOperator(std::string word, double duration=50.0){
             chunck = word;
             Real_duration = duration;
+        }
+        std::string content(){
+            return type+":"+chunck;
         }
     private:
         double Real_duration = 50.0;
@@ -125,6 +137,9 @@ class MotorOperator: public Operator
         }
         bool if_motor(){
             return true;
+        }
+        std::string content(){
+            return type+":"+chunck;
         }
     private:
         double Real_duration = 0.0;

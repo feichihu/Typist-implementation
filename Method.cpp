@@ -10,9 +10,10 @@
 
 double Method::duration() {
     double duration = 0.0;
-    
+   std::cout<<"test duration"<<std::endl; 
     for (std::list<Operator*>::iterator iterator = operators.begin(), end = operators.end(); iterator != end; ++iterator) {
         duration += (*iterator)->duration();
+        std::cout<<duration<<std::endl;
     }
     
     return duration;
@@ -38,28 +39,36 @@ bool Method::if_samehand(std::string a, std::string b){
             Recognitive.push_back(new RecognitiveOperator(i));
         }
         for(std::string i : Motor_flow){
-            Recognitive.push_back(new MotorOperator(i, real_motor_duration));
+            Motor.push_back(new MotorOperator(i, real_motor_duration));
         }
+        std::cout<<"finish Rec and Motor intialization"<<std::endl;
+        std::cout<<"their sizes are:"<<Recognitive.size()<<" "<<Motor.size()<<std::endl;
+
 
         //adding dependency, a this step, cognitive flow is exactly the same as motor flow(withour the LTM process)
         //1. cognitive to cognitive
+
+        std::cout<<"Adding cog to cog dependency"<<std::endl;
         for(int i = 0; i<Motor_flow_size-1;i++){
             Recognitive[i]->set_next(Recognitive[i+1]);
             Recognitive[i+1]->set_previous(Recognitive[i]);
         }
         //2. cognitive to motor
+        std::cout<<"Adding cog to motor dependency"<<std::endl;
         for(int i = 0; i<Motor_flow_size;i++){
             Recognitive[i]->set_next(Motor[i]);
             Motor[i]->set_previous(Recognitive[i]);
         }
         //3. motor to cognitive
-        for(int i = 0; i<Motor_flow_size;i++){
+        std::cout<<"Adding motor to cog dependency"<<std::endl;
+        for(int i = 0; i<Motor_flow_size-1;i++){
             if(if_samehand(Motor_flow[i],Motor_flow[i+1])){
                 Motor[i]->set_next(Recognitive[i+1]);
                 Recognitive[i+1]->set_previous(Motor[i]);
             }
         }
         //4. motor to motor
+        std::cout<<"Adding motor to motor dependency"<<std::endl;
         for(int i = 0; i<Motor_flow_size-1;i++){
             Motor[i]->set_next(Motor[i+1]);
             Motor[i+1]->set_previous(Motor[i]);
@@ -69,16 +78,27 @@ bool Method::if_samehand(std::string a, std::string b){
         //this part is hardcoded
         std::vector<int> LTM_places{0,6,13,20,25,32,38,43,49};
         for(int i=0; i<(int)LTM_places.size(); i++){
+            std::cout<<"adding LTM dependency at"<<Perceptual_flow[i]<<std::endl;
             Recognitive.insert(Recognitive.begin()+LTM_places[i], new RecognitiveOperator(Perceptual_flow[i]));
             if(i==0){
                 Recognitive[0]->set_next(Recognitive[1]);
                 Recognitive[1]->set_previous(Recognitive[0]);
             }
             else{
-                Recognitive[i]->set_next(Recognitive[i+1]);
-                Recognitive[i+1]->set_previous(Recognitive[i]);
-                Recognitive[i-1]->set_next(Recognitive[i]);
-                Recognitive[i]->set_previous(Recognitive[i-1]);
+                int p = LTM_places[i];
+                Recognitive[p]->set_next(Recognitive[p+1]);
+                Recognitive[p+1]->set_previous(Recognitive[p]);
+                Recognitive[p-1]->set_next(Recognitive[p]);
+                Recognitive[p]->set_previous(Recognitive[p-1]);
+            }
+        }
+        std::cout<<"finish LTM intialization"<<std::endl;
+        std::cout<<"their sizes are:"<<Recognitive.size()<<" "<<Motor.size()<<std::endl;
+        std::cout<<"Contents of rec are:"<<std::endl;
+        for(auto i:Recognitive){
+            if(!i->next.empty()){
+                std::cout<<i->content()<<"|";
+                std::cout<<(*i->next.begin())->content()<<std::endl;
             }
         }
         
@@ -87,6 +107,7 @@ bool Method::if_samehand(std::string a, std::string b){
 
 void  Method::find_path(){
         //iterate throught the first cognitive task
+        std::cout<<"starting finding path "<<Recognitive.size()<<std::endl;
         for(auto i: Recognitive){
             i->update();
         }

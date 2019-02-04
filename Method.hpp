@@ -62,7 +62,9 @@ class Method
                 delete i;
             }
         }
-        virtual void process(std::string phrase);
+        void process(std::string phrase){
+            find_path();
+        }
         bool if_samehand(std::string a, std::string b); //determine if a and b are typed by the same hand
     
         /**
@@ -71,8 +73,8 @@ class Method
         double duration();
         void find_path();
         std::string Perceptual_flow[9] = {"The_","quick_","brown_","fox_", "jumps_", "over_", "the_", "lazy_", "dog."};
-        std::string Recognitive_flow[Reconitive_flow_size] = {"The_","shift", " t", "h", "e", "_", "quick_", "q", "u", "i", "c", "k", "_", "brown_", "b", "r", "o", "w", "n", "_", "fox_", "f", "o", "x", "_", "jumps_", "j", "u", "m", "p", "s", "_", "over_", "o", "v", "e", "r", "_", "the_", "t", "h", "e", "_", "lazy_", "l", "a", "z", "y", "_", "dog.", "d", "o", "g", "."};
-        std::string Motor_flow[Motor_flow_size] = {"shift", " t", "h", "e", "_", "q", "u", "i", "c", "k", "_", "b", "r", "o", "w", "n", "_", "f", "o", "x", "_", "j", "u", "m", "p", "s", "_", "o", "v", "e", "r", "_", "t", "h", "e", "_", "l", "a", "z", "y", "_", "d", "o", "g", "."};
+        std::string Recognitive_flow[Reconitive_flow_size] = {"The_","shift", "t", "h", "e", "_", "quick_", "q", "u", "i", "c", "k", "_", "brown_", "b", "r", "o", "w", "n", "_", "fox_", "f", "o", "x", "_", "jumps_", "j", "u", "m", "p", "s", "_", "over_", "o", "v", "e", "r", "_", "the_", "t", "h", "e", "_", "lazy_", "l", "a", "z", "y", "_", "dog.", "d", "o", "g", "."};
+        std::string Motor_flow[Motor_flow_size] = {"shift", "t", "h", "e", "_", "q", "u", "i", "c", "k", "_", "b", "r", "o", "w", "n", "_", "f", "o", "x", "_", "j", "u", "m", "p", "s", "_", "o", "v", "e", "r", "_", "t", "h", "e", "_", "l", "a", "z", "y", "_", "d", "o", "g", "."};
     private:
         std::vector<Operator*> Recognitive;
         std::vector<Operator*> Motor;
