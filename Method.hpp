@@ -88,11 +88,13 @@ class NoviceMethod: public Method
 
 class IntermediateMethod: public Method
 {
+ public:
     IntermediateMethod(): Method(170.0) {}
 };
 
 class ExpertMethod: public Method
 {
+ public:
     ExpertMethod(): Method(30.0) {}
 };
 

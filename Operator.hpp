@@ -22,6 +22,8 @@
 class Operator
 {
     public:
+        virtual ~Operator(){
+        }
         virtual double duration();
         void set_next(Operator* op){
             next.push_back(op);
@@ -49,7 +51,7 @@ class Operator
         }
         void update(int t=1){//update t times through the linked relation
             if(t<0) return;
-            for(int i=0; i<next.size(); i++){
+            for(int i=0; i<(int)next.size(); i++){
                 next[i]->get_update(this, highest_duration+duration());
                 if(next[i]->if_motor()){//only update motor operators' next
                     next[i]->update(t-1);

@@ -11,8 +11,8 @@
 double Method::duration() {
     double duration = 0.0;
     
-    for (std::list<Operator>::iterator iterator = operators.begin(), end = operators.end(); iterator != end; ++iterator) {
-        duration += iterator->duration();
+    for (std::list<Operator*>::iterator iterator = operators.begin(), end = operators.end(); iterator != end; ++iterator) {
+        duration += (*iterator)->duration();
     }
     
     return duration;
@@ -50,13 +50,14 @@ bool Method::if_samehand(std::string a, std::string b){
         //2. cognitive to motor
         for(int i = 0; i<Motor_flow_size;i++){
             Recognitive[i]->set_next(Motor[i]);
-            Motor[i]->set_previous[i];
+            Motor[i]->set_previous(Recognitive[i]);
         }
         //3. motor to cognitive
         for(int i = 0; i<Motor_flow_size;i++){
-            if(if_samehand(Motor_flow[i],Motor_flow[i+1]))
+            if(if_samehand(Motor_flow[i],Motor_flow[i+1])){
                 Motor[i]->set_next(Recognitive[i+1]);
                 Recognitive[i+1]->set_previous(Motor[i]);
+            }
         }
         //4. motor to motor
         for(int i = 0; i<Motor_flow_size-1;i++){
@@ -67,7 +68,7 @@ bool Method::if_samehand(std::string a, std::string b){
         //Adding LTM process into the cognitive flow ("One_")
         //this part is hardcoded
         std::vector<int> LTM_places{0,6,13,20,25,32,38,43,49};
-        for(int i=0; i<LTM_places.size(); i++){
+        for(int i=0; i<(int)LTM_places.size(); i++){
             Recognitive.insert(Recognitive.begin()+LTM_places[i], new RecognitiveOperator(Perceptual_flow[i]));
             if(i==0){
                 Recognitive[0]->set_next(Recognitive[1]);
@@ -89,11 +90,11 @@ void  Method::find_path(){
         for(auto i: Recognitive){
             i->update();
         }
-        std::cout<<"-------totol time elapsed is"<<Motor.back()->time_elapsed<<std::endl;
+        std::cout<<"-------totol time elapsed is"<<Motor.back()->time_elapsed()<<std::endl;
         Operator* it = Motor.back();
         while(it->back()!=nullptr){
             operators.push_front(it);
-            it = it->back;
+            it = it->back();
         }
     }
 
