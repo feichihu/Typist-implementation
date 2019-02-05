@@ -42,6 +42,9 @@
 */
 #define Reconitive_flow_size 54
 #define Motor_flow_size 45
+#define Perceptual_Duration 340
+#define Recognitive_Duration 50
+#define Motor_Duration 50
 
 
 class Method
@@ -63,24 +66,8 @@ class Method
             }
         }
         
-        void exam_recog(){
-            std::cout<<"exam recog"<<std::endl;
-            for (RecognitiveOperator* i:Recognitive){
-                std::cout<<i<<std::endl;
-            }
-        }
-        
-
-        void exam_motor(){
-            std::cout<<"exam motor"<<std::endl;
-            for (MotorOperator* i:Motor){
-                std::cout<<i->next_size()<<"if motor"<<i->if_motor()<<" "<<i->content()<<std::endl;
-            }
-        }
         void process(std::string phrase){
             std::cout<<std::endl;
-            exam_recog();
-            exam_motor();
             find_path();
         }
         bool if_samehand(std::string a, std::string b); //determine if a and b are typed by the same hand
@@ -94,8 +81,8 @@ class Method
         std::string Recognitive_flow[Reconitive_flow_size] = {"The_","shift", "t", "h", "e", "_", "quick_", "q", "u", "i", "c", "k", "_", "brown_", "b", "r", "o", "w", "n", "_", "fox_", "f", "o", "x", "_", "jumps_", "j", "u", "m", "p", "s", "_", "over_", "o", "v", "e", "r", "_", "the_", "t", "h", "e", "_", "lazy_", "l", "a", "z", "y", "_", "dog.", "d", "o", "g", "."};
         std::string Motor_flow[Motor_flow_size] = {"shift", "t", "h", "e", "_", "q", "u", "i", "c", "k", "_", "b", "r", "o", "w", "n", "_", "f", "o", "x", "_", "j", "u", "m", "p", "s", "_", "o", "v", "e", "r", "_", "t", "h", "e", "_", "l", "a", "z", "y", "_", "d", "o", "g", "."};
     protected:
-        std::vector<RecognitiveOperator*> Recognitive;
-        std::vector<MotorOperator*> Motor;
+        std::vector<Operator*> Recognitive;
+        std::vector<Operator*> Motor;
         double real_motor_duration;
 
 };
@@ -104,7 +91,6 @@ class NoviceMethod: public Method
 {
  public:
     NoviceMethod(): Method(230.0) {
-        exam_recog();
     }
 };
 

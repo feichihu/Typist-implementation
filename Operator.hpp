@@ -22,41 +22,27 @@
 class Operator
 {
     public:
+        Operator(std::string word, double duration, std::string t) {
+            chunck = word;
+            Real_duration = duration;
+            type = t;
+        }
         virtual ~Operator(){ }
-        virtual double duration(){ return -1.0; }
-        void set_next(Operator* op){
-            next.push_back(op);
-            std::cout<<"set_next: next size="<<next.size()<<std::endl;
+        virtual double duration(){ 
+            std::cout << type << " operator " << "handles --" << chunck << "-- at " << time_elapsed() << std::endl;
+            return Real_duration;
         }
-        void set_next_cog(Operator* op){
-            next[0] = op;
-            std::cout<<"set_next: next size="<<next.size()<<std::endl;
+        virtual void set_next_motor(Operator* op){
+            Next_motor = op;
+            std::cout<<"set_next_motor"<<std::endl;
         }
-        void pop_next(){
-            next.pop_back();
-            std::cout<<"pop_next: next size="<<next.size()<<std::endl;
-        }
-        void set_previous(Operator* op){
-            previous.push_back(op);
-            std::cout<<"set_pre: pre size="<<previous.size()<<std::endl;
-        }
-        void set_previous_cog(Operator* op){
-            previous[0] = op;
-            std::cout<<"set_pre: pre size="<<previous.size()<<std::endl;
-        }
-        void pop_previous(){
-            previous.pop_back();
-            std::cout<<"pop_pre: pre size="<<previous.size()<<std::endl;
+        virtual void set_next_cog(Operator* op){
+            Next_cog = op;
+            std::cout<<"set_next"<<std::endl;
         }
         void set_backtrace(Operator* op){
             backtrace = op;
             std::cout<<"set_backtrace"<<std::endl;
-        }
-        std::vector<Operator*> next_list(){
-            return next;
-        }
-        std::vector<Operator*> previous_list(){
-            return previous;
         }
         Operator* back(){
             return backtrace;
@@ -64,19 +50,13 @@ class Operator
         double time_elapsed(){
             return highest_duration;
         }
-        virtual bool if_motor(){
-            return false;
-        }
         virtual void update(int t=1){//update t times through the linked relation
             if(t<0) return;
-            std::cout<<std::endl<<"update"<<next.size()<<" "<<previous.size()<<std::endl;
-            for(auto i:next){
-                i->get_update(this, highest_duration+duration());
-                if(i->if_motor()){//only update motor operators' next
-                    i->update(t-1);
-                }
+            std::cout<<std::endl<<"update"<<std::endl;
+                Next_cog->get_update(this, highest_duration+duration());
+                Next_motor->get_update(this, highest_duration+duration());
+                Next_motor->update(t-1);
             }
-        }
         virtual bool get_update(Operator* op, double new_duration){
             if(new_duration>highest_duration){
                 backtrace = op;
@@ -86,38 +66,32 @@ class Operator
             return false;
         }
         virtual std::string content(){
-            return "fucked up";
+            return type+":"+chunck;
         }
-        virtual size_t next_size(){
-            return next.size();
+        bool if_motor(){
+            return type=="motor";
         }
 
     protected:
-        std::vector<Operator*> next = std::vector<Operator*>();
-        std::vector<Operator*> previous = std::vector<Operator*>();
+        Operator* Next_cog = nullptr;
+        Operator* Next_motor = nullptr;
         Operator* backtrace = nullptr;
         double highest_duration=0.0;
-};
-
-
-class PerceptualOperator: public Operator
-{
-    public:
-        double duration(){
-            std::cout << type << " operator " << "handles --" << chunck << "-- at " << time_elapsed() << std::endl;
-            return Real_duration;
-        }
-        PerceptualOperator(std::string word, double duration=340.0){
-            chunck = word;
-            Real_duration = duration;
-        }
-        std::string content(){
-            return type+":"+chunck;
-        }
-    private:
         double Real_duration = 340.0;
         std::string chunck;
         std::string type="perceptual";
+};
+
+
+/*
+class PerceptualOperator: public Operator
+{
+    public:
+        PerceptualOperator(std::string word, double duration=340.0) : Operator(){
+            chunck = word;
+            Real_duration = duration;
+        }
+        
 };
 
 
@@ -125,47 +99,24 @@ class PerceptualOperator: public Operator
 class RecognitiveOperator: public Operator
 {
     public:
-        double duration(){
-            std::cout << type << " operator " << "handles --" << chunck << "-- at " << time_elapsed() << std::endl;
-            return Real_duration;
-        }
-        RecognitiveOperator(std::string word, double duration=50.0){
+        RecognitiveOperator(std::string word, double duration=50.0) : Operator(){
             std::cout<<"new recog"<<std::endl;
             chunck = word;
             Real_duration = duration;
+            type = "recognitive";
         }
-        std::string content(){
-            return type+":"+chunck;
-        }
-    private:
-        double Real_duration = 50.0;
-        std::string chunck;
-        std::string type="recognitive";
 };
 
 
 class MotorOperator: public Operator
 {
     public:
-        double duration(){
-            std::cout << type << " operator " << "handles --" << chunck << "-- at " << time_elapsed() << std::endl;
-            return Real_duration;
-        }
-        MotorOperator(std::string word, double duration){
+        MotorOperator(std::string word, double duration) : Operator(){
             std::cout<<"new motor"<<std::endl;
             chunck = word;
             Real_duration = duration;
+            type = "motor";
         }
-        bool if_motor(){
-            return true;
-        }
-        std::string content(){
-            return type+":"+chunck;
-        }
-    private:
-        double Real_duration = 0.0;
-        std::string chunck;
-        std::string type="motor";
 };
-
+*/
 #endif /* Operator_hpp */
