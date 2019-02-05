@@ -53,9 +53,11 @@ class Operator
         virtual void update(int t=1){//update t times through the linked relation
             if(t<0) return;
             std::cout<<std::endl<<"update"<<std::endl;
-                Next_cog->get_update(this, highest_duration+duration());
-                Next_motor->get_update(this, highest_duration+duration());
-                Next_motor->update(t-1);
+                if(Next_cog) Next_cog->get_update(this, highest_duration+duration());
+                if(Next_motor){
+                    Next_motor->get_update(this, highest_duration+duration());
+                    Next_motor->update(t-1);
+                }
             }
         virtual bool get_update(Operator* op, double new_duration){
             if(new_duration>highest_duration){
@@ -83,40 +85,4 @@ class Operator
 };
 
 
-/*
-class PerceptualOperator: public Operator
-{
-    public:
-        PerceptualOperator(std::string word, double duration=340.0) : Operator(){
-            chunck = word;
-            Real_duration = duration;
-        }
-        
-};
-
-
-
-class RecognitiveOperator: public Operator
-{
-    public:
-        RecognitiveOperator(std::string word, double duration=50.0) : Operator(){
-            std::cout<<"new recog"<<std::endl;
-            chunck = word;
-            Real_duration = duration;
-            type = "recognitive";
-        }
-};
-
-
-class MotorOperator: public Operator
-{
-    public:
-        MotorOperator(std::string word, double duration) : Operator(){
-            std::cout<<"new motor"<<std::endl;
-            chunck = word;
-            Real_duration = duration;
-            type = "motor";
-        }
-};
-*/
 #endif /* Operator_hpp */

@@ -57,6 +57,7 @@ class Method
          * Method to parse a phrase into a method. Subclasses should implement their specific strategy and store it as a list of operators.
          */
         Method(double motor_duration);
+        /*
         ~Method(){
             for(auto i:Recognitive){
                 delete i;
@@ -65,6 +66,7 @@ class Method
                 delete i;
             }
         }
+        */
         
         void process(std::string phrase){
             std::cout<<std::endl;
