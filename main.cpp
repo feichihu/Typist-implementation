@@ -15,6 +15,7 @@ int main(int argc, const char * argv[]) {
     
     // Instantiate a new Method instance, representing a schedule chart for a novice typist. Make sure you justify your schedule chart as comments in the NoviceMethod class.
     Method noviceMethod = NoviceMethod();
+    noviceMethod.exam_recog();
     noviceMethod.process(phrase);
     
     std::cout << "It would take a novice typist ";

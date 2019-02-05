@@ -24,9 +24,12 @@ bool Method::if_samehand(std::string a, std::string b){
     std::set<std::string> right={"y","h","n","u","j","m","i","k","o","p","l",",",".",";",":"};
     int A{},B{};
     A = left.find(a)==left.end()? 0:-1;
-    A = right.find(a)==right.end()? 0:1;
+    if(A==0)
+        A = right.find(a)==right.end()? 0:1;
+    //A -1:left 0:can use both hand 1 :right
     B = left.find(b)==left.end()? 0:-1;
-    B = right.find(b)==right.end()? 0:1;
+    if(B==0)
+        B = right.find(b)==right.end()? 0:1;
     if(A==0 || B==0) return false;// keys that can be pressed by both hands
     else if (A==B) return true;// keys in same hand
     else return false;// keys in different hands
@@ -82,13 +85,14 @@ bool Method::if_samehand(std::string a, std::string b){
             Recognitive.insert(Recognitive.begin()+LTM_places[i], new RecognitiveOperator(Perceptual_flow[i]));
             if(i==0){
                 Recognitive[0]->set_next(Recognitive[1]);
+                std::cout<<"size of next in Rec[0] is"<<Recognitive[0]->next_size()<<std::endl;
                 Recognitive[1]->set_previous(Recognitive[0]);
             }
             else{
                 int p = LTM_places[i];
                 Recognitive[p]->set_next(Recognitive[p+1]);
-                Recognitive[p+1]->set_previous(Recognitive[p]);
-                Recognitive[p-1]->set_next(Recognitive[p]);
+                Recognitive[p+1]->set_previous_cog(Recognitive[p]);
+                Recognitive[p-1]->set_next_cog(Recognitive[p]);
                 Recognitive[p]->set_previous(Recognitive[p-1]);
             }
         }
@@ -96,11 +100,16 @@ bool Method::if_samehand(std::string a, std::string b){
         std::cout<<"their sizes are:"<<Recognitive.size()<<" "<<Motor.size()<<std::endl;
         std::cout<<"Contents of rec are:"<<std::endl;
         for(auto i:Recognitive){
-            if(!i->next.empty()){
-                std::cout<<i->content()<<"|";
-                std::cout<<(*i->next.begin())->content()<<std::endl;
-            }
+            std::cout<<i->content()<<"|";
+            std::cout<<i->if_motor()<<"|";
+            std::cout<<i->next_size()<<std::endl;
         }
+        for(auto i:Motor){
+            std::cout<<i->content()<<"|";
+            std::cout<<i->if_motor()<<"|";
+            std::cout<<i->next_size()<<std::endl;
+        }
+        exam_motor();
         
     }
 
@@ -108,10 +117,11 @@ bool Method::if_samehand(std::string a, std::string b){
 void  Method::find_path(){
         //iterate throught the first cognitive task
         std::cout<<"starting finding path "<<Recognitive.size()<<std::endl;
-        for(auto i: Recognitive){
+        for(Operator* i: Recognitive){
+            std::cout<<"examine the content of next"<<i->next_size()<<"content="<<i->content()<<std::endl;
             i->update();
         }
-        std::cout<<"-------totol time elapsed is"<<Motor.back()->time_elapsed()<<std::endl;
+        std::cout<<"-------total time elapsed is"<<Motor.back()->time_elapsed()<<std::endl;
         Operator* it = Motor.back();
         while(it->back()!=nullptr){
             operators.push_front(it);

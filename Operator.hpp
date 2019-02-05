@@ -28,9 +28,25 @@ class Operator
             next.push_back(op);
             std::cout<<"set_next: next size="<<next.size()<<std::endl;
         }
+        void set_next_cog(Operator* op){
+            next[0] = op;
+            std::cout<<"set_next: next size="<<next.size()<<std::endl;
+        }
+        void pop_next(){
+            next.pop_back();
+            std::cout<<"pop_next: next size="<<next.size()<<std::endl;
+        }
         void set_previous(Operator* op){
             previous.push_back(op);
             std::cout<<"set_pre: pre size="<<previous.size()<<std::endl;
+        }
+        void set_previous_cog(Operator* op){
+            previous[0] = op;
+            std::cout<<"set_pre: pre size="<<previous.size()<<std::endl;
+        }
+        void pop_previous(){
+            previous.pop_back();
+            std::cout<<"pop_pre: pre size="<<previous.size()<<std::endl;
         }
         void set_backtrace(Operator* op){
             backtrace = op;
@@ -48,10 +64,10 @@ class Operator
         double time_elapsed(){
             return highest_duration;
         }
-        bool if_motor(){
+        virtual bool if_motor(){
             return false;
         }
-        void update(int t=1){//update t times through the linked relation
+        virtual void update(int t=1){//update t times through the linked relation
             if(t<0) return;
             std::cout<<std::endl<<"update"<<next.size()<<" "<<previous.size()<<std::endl;
             for(auto i:next){
@@ -61,7 +77,7 @@ class Operator
                 }
             }
         }
-        bool get_update(Operator* op, double new_duration){
+        virtual bool get_update(Operator* op, double new_duration){
             if(new_duration>highest_duration){
                 backtrace = op;
                 highest_duration = new_duration;
@@ -72,10 +88,13 @@ class Operator
         virtual std::string content(){
             return "fucked up";
         }
+        virtual size_t next_size(){
+            return next.size();
+        }
 
+    protected:
         std::vector<Operator*> next = std::vector<Operator*>();
         std::vector<Operator*> previous = std::vector<Operator*>();
-    private:
         Operator* backtrace = nullptr;
         double highest_duration=0.0;
 };
@@ -111,6 +130,7 @@ class RecognitiveOperator: public Operator
             return Real_duration;
         }
         RecognitiveOperator(std::string word, double duration=50.0){
+            std::cout<<"new recog"<<std::endl;
             chunck = word;
             Real_duration = duration;
         }
@@ -132,6 +152,7 @@ class MotorOperator: public Operator
             return Real_duration;
         }
         MotorOperator(std::string word, double duration){
+            std::cout<<"new motor"<<std::endl;
             chunck = word;
             Real_duration = duration;
         }
