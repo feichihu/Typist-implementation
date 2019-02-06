@@ -14,6 +14,12 @@
 #include <set>
 #include <string>
 #include "Operator.hpp"
+
+#define Reconitive_flow_size 54
+#define Motor_flow_size 45
+#define Perceptual_Duration 340
+#define Recognitive_Duration 50
+#define Motor_Duration 50
 /*  ASSUMPTION: This typist follows the priciples of Assumption 1-7 in the TYPIST paper, with the following modifications:
   In Assumption 2b, the typist uses both hands, with one finger for each hand in typing
   In Assumption 3, the perceptual processor stays 3 chunks ahead
@@ -40,11 +46,7 @@
     ASSUMPTION: We reperesent schedule chart by doubly linked list of operators. The dependency is represented by 
     the pointing relations.
 */
-#define Reconitive_flow_size 54
-#define Motor_flow_size 45
-#define Perceptual_Duration 340
-#define Recognitive_Duration 50
-#define Motor_Duration 50
+
 
 
 class Method
@@ -56,36 +58,23 @@ class Method
         /**
          * Method to parse a phrase into a method. Subclasses should implement their specific strategy and store it as a list of operators.
          */
-        Method(double motor_duration);
-        /*
-        ~Method(){
-            for(auto i:Recognitive){
-                delete i;
-            }
-            for(auto i:Motor){
-                delete i;
-            }
-        }
-        */
-        
+        Method(double motor_duration);//init schedule chart
         void process(std::string phrase){
-            std::cout<<std::endl;
             find_path();
         }
+        void find_path();// find path from schedule chart
         bool if_samehand(std::string a, std::string b); //determine if a and b are typed by the same hand
-    
         /**
          * Method to compute duration (in seconds) that would take to execute the method.
          */
         double duration();
-        void find_path();
-        std::string Perceptual_flow[9] = {"The_","quick_","brown_","fox_", "jumps_", "over_", "the_", "lazy_", "dog."};
-        std::string Recognitive_flow[Reconitive_flow_size] = {"The_","shift", "t", "h", "e", "_", "quick_", "q", "u", "i", "c", "k", "_", "brown_", "b", "r", "o", "w", "n", "_", "fox_", "f", "o", "x", "_", "jumps_", "j", "u", "m", "p", "s", "_", "over_", "o", "v", "e", "r", "_", "the_", "t", "h", "e", "_", "lazy_", "l", "a", "z", "y", "_", "dog.", "d", "o", "g", "."};
-        std::string Motor_flow[Motor_flow_size] = {"shift", "t", "h", "e", "_", "q", "u", "i", "c", "k", "_", "b", "r", "o", "w", "n", "_", "f", "o", "x", "_", "j", "u", "m", "p", "s", "_", "o", "v", "e", "r", "_", "t", "h", "e", "_", "l", "a", "z", "y", "_", "d", "o", "g", "."};
     protected:
         std::vector<Operator*> Recognitive;
         std::vector<Operator*> Motor;
         double real_motor_duration;
+        std::string Perceptual_flow[9] = {"The_","quick_","brown_","fox_", "jumps_", "over_", "the_", "lazy_", "dog."};
+        std::string Recognitive_flow[Reconitive_flow_size] = {"The_","shift", "t", "h", "e", "_", "quick_", "q", "u", "i", "c", "k", "_", "brown_", "b", "r", "o", "w", "n", "_", "fox_", "f", "o", "x", "_", "jumps_", "j", "u", "m", "p", "s", "_", "over_", "o", "v", "e", "r", "_", "the_", "t", "h", "e", "_", "lazy_", "l", "a", "z", "y", "_", "dog.", "d", "o", "g", "."};
+        std::string Motor_flow[Motor_flow_size] = {"shift", "t", "h", "e", "_", "q", "u", "i", "c", "k", "_", "b", "r", "o", "w", "n", "_", "f", "o", "x", "_", "j", "u", "m", "p", "s", "_", "o", "v", "e", "r", "_", "t", "h", "e", "_", "l", "a", "z", "y", "_", "d", "o", "g", "."};
 
 };
 

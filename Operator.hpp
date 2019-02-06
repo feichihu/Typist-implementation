@@ -47,7 +47,10 @@ class Operator
         double time_elapsed(){
             return highest_duration;
         }
-        virtual void update(int t=1){//update t times through the linked relation
+        virtual void update(int t=1){//update next t items through the linked relation
+            //the update order is strictly enforced:
+            //1. update next recognitive operator
+            //2. update motor operator
             if(t<0) return;
                 if(Next_cog) Next_cog->get_update(this, highest_duration+duration());
                 if(Next_motor){
@@ -55,8 +58,8 @@ class Operator
                     Next_motor->update(t-1);
                 }
             }
-        virtual bool get_update(Operator* op, double new_duration){
-            if(new_duration>highest_duration){
+        virtual bool get_update(Operator* op, double new_duration){//get update request from previous operator in time
+            if(new_duration>highest_duration){//determine if accept update
                 backtrace = op;
                 highest_duration = new_duration;
                 return true;
