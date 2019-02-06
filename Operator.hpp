@@ -29,20 +29,17 @@ class Operator
         }
         virtual ~Operator(){ }
         virtual double duration(){ 
-            std::cout << type << " operator " << "handles --" << chunck << "-- at " << time_elapsed() << std::endl;
+            //std::cout << type << " operator " << "handles --" << chunck << "-- at " << time_elapsed() << std::endl;
             return Real_duration;
         }
         virtual void set_next_motor(Operator* op){
             Next_motor = op;
-            std::cout<<"set_next_motor"<<std::endl;
         }
         virtual void set_next_cog(Operator* op){
             Next_cog = op;
-            std::cout<<"set_next"<<std::endl;
         }
         void set_backtrace(Operator* op){
             backtrace = op;
-            std::cout<<"set_backtrace"<<std::endl;
         }
         Operator* back(){
             return backtrace;
@@ -52,7 +49,6 @@ class Operator
         }
         virtual void update(int t=1){//update t times through the linked relation
             if(t<0) return;
-            std::cout<<std::endl<<"update"<<std::endl;
                 if(Next_cog) Next_cog->get_update(this, highest_duration+duration());
                 if(Next_motor){
                     Next_motor->get_update(this, highest_duration+duration());
