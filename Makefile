@@ -7,8 +7,13 @@ EXECUTABLE 	= typist
 PROJECTFILE = Method.cpp Method.hpp Operator.hpp Operator.cpp main.cpp
 
 # Scheduler recipe depends on the object files being built
-$(EXECUTABLE): $(OBJS)
+$(EXECUTABLE): $(PROJECTFILE)
 	$(CXX) $(CXXFLAGS) $(PROJECTFILE) -o $(EXECUTABLE)
+
+
+f: 
+f: FittsLaw.cpp
+	$(CXX) $(CXXFLAGS) FittsLaw.cpp -o f
 
 clean:
 	rm  -f typist 
