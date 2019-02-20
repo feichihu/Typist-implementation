@@ -12,7 +12,7 @@ $(EXECUTABLE): $(PROJECTFILE)
 
 
 f: 
-f: FittsLaw.cpp
+f: FittsLaw.cpp Constants.hpp
 	$(CXX) $(CXXFLAGS) FittsLaw.cpp -o f
 
 clean:

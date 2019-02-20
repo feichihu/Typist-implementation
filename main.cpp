@@ -22,17 +22,7 @@ int main(int argc, const char * argv[]) {
     std::cout << " seconds to type the phrase '";
     std::cout << phrase;
     std::cout << "'\n";
-    
-    // Instantiate a new Method instance, representing a schedule chart for an intermediate typist. Make sure you justify your schedule chart as comments in the IntermediateMethod class.
-    Method intermediateMethod = IntermediateMethod();
-    intermediateMethod.process(phrase);
-    
-    std::cout << "It would take an intermediate typist ";
-    std::cout << intermediateMethod.duration();
-    std::cout << " seconds to type the phrase '";
-    std::cout << phrase;
-    std::cout << "'\n";
-    
+  
     // Instantiate a new Method instance, representing a schedule chart for an expert typist. Make sure you justify your schedule chart as comments in the ExpertMethod class.
     Method expertMethod = ExpertMethod();
     expertMethod.process(phrase);
