@@ -19,6 +19,17 @@ double Method::duration() {
     return duration;
 }
 
+bool Method::ifValid(std::string input){
+    for(int i = 0; i<input.length(); i++){
+        if(input[i]!=' ' && !isalpha(input[i])) {
+            cout<<"!!!!!warning!!!!!!"<<std::endl;
+            cout<<"This program only simulates alphabetic input string, please remove any other characters and try again."<<std::endl;
+            return false;
+        }
+        else return true;
+    }
+}
+
 bool Method::if_samehand(std::string a, std::string b){
     std::set<std::string> left={"q","w","e","r","t","a","s","d","f","g","z","x","c","v","b"};
     std::set<std::string> right={"y","h","n","u","j","m","i","k","o","p","l",",",".",";",":"};
@@ -94,7 +105,7 @@ bool Method::if_samehand(std::string a, std::string b){
 
 
 void  Method::find_path(){
-        //iterate throught the first cognitive task
+        //iterate through the first cognitive task
         //std::cout<<"starting finding path "<<Recognitive.size()<<std::endl;
         for(Operator* i: Recognitive){
             i->update();

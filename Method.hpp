@@ -13,6 +13,7 @@
 #include <list>
 #include <set>
 #include <string>
+#include <cctype>
 #include "Operator.hpp"
 
 #define Reconitive_flow_size 54
@@ -27,25 +28,21 @@
   In Assumption 5, 
   In Assumption 6, 
     Perceptual duration is 340ms
-    Cognitive duration is 50ms
-  In Assumption 7, The only difference bewtween different typists(methods) is their motor operator duration:
-    Novice is 230ms
-    Intermediate is 170ms
-    Expert is 30ms
+    Cognitive duration for fetch a word is 50 ms
+    Cognitive duration for single key is keyboard search time
+    Motor duration is fitts' law movement time
+  !!!The only difference bewtween different typists(methods) is their keyboard search duration
 */
 
-/* Here is one important observation:
-    !!!The Perceptual operator will not apppear in the critical path except at the beginning.
-    This is because the shortest 3 words chunk in the sample phrase is "the lazy dog",
-    which is has a duration larger than 600ms, even if we only consider the cognitive durations.
-    Therefore, critical path can only pass nodes in cognitive operators and motor operators after the first word.
-    Thus, for the purpose of reducing complexity, we only consider cognitive and motor operators in this program,
-    while adding 340ms to the final result to represent the perceptual of the first word.
+/* Here is one important assumption:
+    This program only simulate input of letters and space. Any other character is not supported due to lack of experimental data.
+    Also, this program does not distinguish UPPER or lower cases(no shift key), since usually mobile keyboard will automatically switch cases.
 */
 /*
-    ASSUMPTION: We reperesent schedule chart by doubly linked list of operators. The dependency is represented by 
+    ASSUMPTION: We reperesent schedule chart by linked list of operators. The dependency is represented by 
     the pointing relations.
 */
+
 
 
 
@@ -58,10 +55,11 @@ class Method
         /**
          * Method to parse a phrase into a method. Subclasses should implement their specific strategy and store it as a list of operators.
          */
-        Method(double motor_duration);//init schedule chart
+        Method(bool ifNovice);//init schedule chart
         void process(std::string phrase){
-            find_path();
+            // encode given phrase into schedule chart
         }
+        bool ifValid(std::string input);
         void find_path();// find path from schedule chart
         bool if_samehand(std::string a, std::string b); //determine if a and b are typed by the same hand
         /**
@@ -80,20 +78,14 @@ class Method
 class NoviceMethod: public Method
 {
  public:
-    NoviceMethod(): Method(230.0) {
+    NoviceMethod(): Method(1) {
     }
-};
-
-class IntermediateMethod: public Method
-{
- public:
-    IntermediateMethod(): Method(170.0) {}
 };
 
 class ExpertMethod: public Method
 {
  public:
-    ExpertMethod(): Method(30.0) {}
+    ExpertMethod(): Method(0) {}
 };
 
 #endif /* Method_hpp */

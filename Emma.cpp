@@ -9,7 +9,6 @@
 #include <utility>
 #include "Constants.hpp"
 
-
 const double tau = 4.0;
 const double d = 0.5;
 const double F = 1.06;
@@ -17,14 +16,13 @@ const double f = 1.53;
 const double sigma_M = 0.6;
 const double alpha = 0.02;
 const double sigma_U = 0.26;
-const double  K = 0.4;
-const double  k = 0.006;
-const double  t_prep = 0.2;
-const double  t_exec = 0.070;
-const double  t_sacc = 0.002;
-const double  sigma_V = 0.1;
-const double degreePermm = 1.165;
-const std::unordered_map<char,double> eng_freq = {{'a', 0.082}, {'b', 0.015}, {'c', 0.028}, {'d', 0.043}, {'e', 0.127}, {'f', 0.022}, {'g', 0.02}, {'h', 0.061}, {'i', 0.07}, {'j', 0.002}, {'k', 0.008}, {'l', 0.04}, {'m', 0.024}, {'n', 0.067}, {'o', 0.075}, {'p', 0.019}, {'q', 0.001}, {'r', 0.06}, {'s', 0.063}, {'t', 0.091}, {'u', 0.028}, {'v', 0.01}, {'w', 0.024}, {'x', 0.002}, {'y', 0.02}, {'z', 0.001}};
+const double K = 0.4;
+const double k = 0.006;
+const double t_prep = 0.2;
+const double t_exec = 0.070;
+const double t_sacc = 0.002;
+const double sigma_V = 0.1;
+std::unordered_map<char, double> eng_freq = {{'a', 0.082}, {'b', 0.015}, {'c', 0.028}, {'d', 0.043}, {'e', 0.127}, {'f', 0.022}, {'g', 0.02}, {'h', 0.061}, {'i', 0.07}, {'j', 0.002}, {'k', 0.008}, {'l', 0.04}, {'m', 0.024}, {'n', 0.067}, {'o', 0.075}, {'p', 0.019}, {'q', 0.001}, {'r', 0.06}, {'s', 0.063}, {'t', 0.091}, {'u', 0.028}, {'v', 0.01}, {'w', 0.024}, {'x', 0.002}, {'y', 0.02}, {'z', 0.001}};
 
 /*
     Emma is an instance of the model EMMA in keyboard search
@@ -49,18 +47,38 @@ const std::unordered_map<char,double> eng_freq = {{'a', 0.082}, {'b', 0.015}, {'
 */
 class Emma
 {
-    public:
-
-    // This function inputs (from, to) pair and return the keyboard searching time
-    double search(std::string from, std::string to){
-        return 0.0;
+  public:
+    Emma(Dict &dic, bool ifNovice)
+    {
+        dict = dic;
+        Novice = ifNovice;
     }
 
-    private:
+    // This function inputs (from, to) pair and return the keyboard searching time
+    // Return value in ms
+    double Time(std::string from, std::string to)
+    {
+        // time = Vision + LTM
+        //      = Encoding time + LTM
+        singleEntry datum = dict.query(from, to);
+        char p = from[0];
+        double encodingTime = Encoding(eng_freq[p], datum.degree);
+        double LTMTime = LTM();
 
+        return encodingTime + LTMTime;
+    }
+    inline double Encoding(double freq, double epsilon){
+        double Te = K * (-log2(freq)) * exp(k*epsilon);
+        return Te;
+    }
+
+    inline double LTM(){
+        double Bi = Novice? 0 : log(2);
+        return F * exp(-f * Bi);
+    }
+  private:
+    Dict dict;
+    bool Novice;
 
     //LTM
-
-
-
 };

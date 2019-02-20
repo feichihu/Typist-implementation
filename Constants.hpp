@@ -20,15 +20,12 @@ extern const double  t_prep;
 extern const double  t_exec;
 extern const double  t_sacc;
 extern const double  sigma_V;
-extern const std::unordered_map<char,double> eng_freq;
+extern std::unordered_map<char,double> eng_freq;
 extern const double degreePermm;
 extern const double a;
 extern const double b;
 
-inline double T_e(double freq, double epsilon){
-    double Te = K * (-log2(freq)) * exp(k*epsilon);
-    return Te;
-}
+
 
 class singleEntry
 { // single entry of data in dict
