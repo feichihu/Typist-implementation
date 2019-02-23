@@ -71,11 +71,11 @@ class CSVRow //read a single row from csv
         std::getline(lineStream, from, ','); //from
         std::getline(lineStream, to, ',');   //to
         std::getline(lineStream, cell, ','); //width
-        std::cout << "reading cell" << cell << std::endl;
+        //std::cout << "reading cell" << cell << std::endl;
         double width = std::stod(cell);
         std::getline(lineStream, cell, ','); //height
         std::getline(lineStream, cell);      //distance
-        std::cout << "reading cell" << cell << std::endl;
+        //std::cout << "reading cell" << cell << std::endl;
         double distance = std::stod(cell);
         data = singleEntry(distance, width);
 

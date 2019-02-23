@@ -30,11 +30,11 @@ void Method::process(std::string phrase){
     c2m
     m2c
     adding words to cog
+    c2c
     p2c
     c2p
     */
     phrase = convert2lower(phrase);
-    std::cout<<"--------"<<phrase<<std::endl;
     std::stringstream phraseStream(phrase);
     std::string temp;
     while(getline(phraseStream,temp, ' ')){
@@ -53,9 +53,9 @@ void Method::process(std::string phrase){
         Perceptual[i]->push(Perceptual[i+1]);
     }
     //init motor and cog
-    Cognitive.push_back(new Operator(Cognitive_flow[0], 0.0, "Cognitive"));
-    Motor.push_back(new Operator(Motor_flow[0], 0.0, "Motor"));
-    for(int i=1; i<(int)Cognitive.size(); i++){
+    Cognitive.push_back(new Operator(Cognitive_flow[0], Cognitive_Duration, "Cognitive"));
+    Motor.push_back(new Operator(Motor_flow[0], Motor_Duration, "Motor"));
+    for(int i=1; i<(int)Cognitive_flow.size(); i++){
         double motor_time = motors.Time(Cognitive_flow[i-1],Cognitive_flow[i]);
         double cog_time = cogs.Time(Cognitive_flow[i-1],Cognitive_flow[i]);
         Cognitive.push_back(new Operator(Cognitive_flow[i], cog_time, "Cognitive"));
@@ -63,12 +63,12 @@ void Method::process(std::string phrase){
         //adding m2m dependency
         Motor[i-1]->push(Motor[i]);
     }
-    for(int i=0; i<(int)Cognitive.size(); i++){
+    for(int i=0; i<(int)Cognitive_flow.size(); i++){
         //adding c2m depency
         Cognitive[i]->push(Motor[i]);
     }
     //adding m2c depency
-    for(int i=0; i<(int)Cognitive.size()-1; i++){
+    for(int i=0; i<(int)Cognitive_flow.size()-1; i++){
         if(if_samehand(Motor_flow[i], Motor_flow[i+1])){
             Motor[i]->push(Cognitive[i+1]);
         }
@@ -77,18 +77,19 @@ void Method::process(std::string phrase){
     //adding words to cog
     int count{};
     for(int i = 0; i<(int)Perceptual_flow.size(); i++){
-        std::cout<<"count = "<<count<<std::endl;
         words_location.push_back(count);
         count++;
         count += Perceptual_flow[i].length();
     }
-    for(int i:words_location){
-        std::cout<<" "<<i<<std::endl;
-    }
-    std::cout<<std::endl;
     //adding cog operators for words
     for(int i = 0; i<(int)Perceptual_flow.size(); i++){
-        Cognitive.insert(Cognitive.begin()+words_location[i], new Operator(Perceptual_flow[i], Cognitive_Duration, "Cognitive"));
+        Operator* temp = new Operator(Perceptual_flow[i], Cognitive_Duration, "Cognitive");
+        Cognitive.insert(Cognitive.begin()+words_location[i], temp);
+    }
+
+    //adding c2c dependency
+    for(int i = 0; i<(int)Cognitive.size()-1; i++){
+        Cognitive[i]->push(Cognitive[i+1]);
     }
 
     //adding p2c dependency
@@ -120,10 +121,11 @@ void Method::initDict() {
 }
 
 double Method::duration() {
+    find_path();
     double duration = 0.0;
     for (std::list<Operator*>::iterator iterator = operators.begin(), end = operators.end(); iterator != end; ++iterator) {
         duration += (*iterator)->duration();
-        //std::cout<<duration<<std::endl;
+        std::cout<<"duration:"<<duration<<std::endl;
     }
     duration = duration/1000.0;//convert ms to s
     return duration;

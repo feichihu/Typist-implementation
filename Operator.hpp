@@ -41,20 +41,23 @@ class Operator
         Operator* back(){
             return backtrace;
         }
+        void print(){
+           std::cout<<type<<" operator works on "<<chunck<<" with duration"<<Real_duration<<" Highest_duration"<<highest_duration<<std::endl; 
+        }
         double update(){
             if(visited) return highest_duration + Real_duration;
             else{
-                double max = 0.0;
                 for(auto i:next){
                     double t;
                     t = i->update();
-                    if(t>max){
+                    if(t>highest_duration){
                         backtrace = i;
-                        max = t;
+                        highest_duration = t;
                     }
                 }
+                print();
                 visited = true;
-                return max + Real_duration; 
+                return highest_duration + Real_duration; 
             }
         }
         double time_elapsed(){
@@ -68,8 +71,8 @@ class Operator
         }
 
     protected:
-        std::vector<Operator*> next;
-        Operator* backtrace;
+        std::vector<Operator*> next{};
+        Operator* backtrace{};
         bool visited = false;
         double highest_duration=0.0;
         double Real_duration = 340.0;

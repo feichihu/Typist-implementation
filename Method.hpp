@@ -76,14 +76,14 @@ class Method
             return lower;
         }
     protected:
-        std::vector<Operator*> Perceptual;
-        std::vector<Operator*> Cognitive;
-        std::vector<Operator*> Motor;
-        std::vector<std::string> Perceptual_flow;
-        std::vector<std::string> Cognitive_flow;
-        std::vector<std::string> Motor_flow;
-        std::vector<int> words_location;
-        Dict dict;
+        std::vector<Operator*> Perceptual{};
+        std::vector<Operator*> Cognitive{};
+        std::vector<Operator*> Motor{};
+        std::vector<std::string> Perceptual_flow{};
+        std::vector<std::string> Cognitive_flow{};
+        std::vector<std::string> Motor_flow{};
+        std::vector<int> words_location{};
+        Dict dict{};
         Emma cogs;
         Fitts motors;
 };

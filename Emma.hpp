@@ -42,8 +42,8 @@ class Emma
     inline double Encoding(double freq, double epsilon);
     inline double LTM();
   private:
-    Dict dict;
-    bool Novice;
+    Dict dict{};
+    bool Novice{};
 };
 
 #endif

@@ -19,7 +19,7 @@ class Fitts{// this is an instance of Fitts' Law on tablet key board, it takes a
         Fitts(Dict& dic);
         double Time(std::string from, std::string to);
     private:
-        Dict dict;
+        Dict dict{};
 };
 
 #endif

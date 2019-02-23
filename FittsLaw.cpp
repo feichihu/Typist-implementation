@@ -14,5 +14,6 @@ Fitts::Fitts(Dict &dic)
 double Fitts::Time(std::string from, std::string to)
 {
     double IDn = dict.query(from, to).ID;
+    std::cout<<"Fitts takes"<<a*IDn +b<<" time"<<std::endl;
     return a * IDn + b;
 }
