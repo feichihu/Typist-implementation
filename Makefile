@@ -4,7 +4,7 @@ CXXFLAGS = -Wall -g -std=c++11
 EXECUTABLE 	= typist
 
 
-PROJECTFILE = Method.cpp Method.hpp Operator.hpp Operator.cpp main.cpp
+PROJECTFILE = Method.cpp Method.hpp Operator.hpp Operator.cpp FittsLaw.hpp FittsLaw.cpp Emma.hpp Emma.cpp main.cpp
 
 # Scheduler recipe depends on the object files being built
 $(EXECUTABLE): $(PROJECTFILE)

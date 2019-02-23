@@ -9,6 +9,116 @@
 #include "Method.hpp"
 
 
+std::istream &operator>>(std::istream &str, CSVRow &data)
+{
+    data.readNextRow(str);
+    return str;
+}
+
+void Method::process(std::string phrase){
+    //transform into lower case
+    //separate by space
+    //  init perceputal operator
+    //  adding p2p denpendency
+    //adding character by character vector
+    //  init motor and cog operators
+    //  adding m2m, c2c dependency
+    /*
+    dependency order:
+    p2p
+    m2m
+    c2m
+    m2c
+    adding words to cog
+    p2c
+    c2p
+    */
+    phrase = convert2lower(phrase);
+    std::cout<<"--------"<<phrase<<std::endl;
+    std::stringstream phraseStream(phrase);
+    std::string temp;
+    while(getline(phraseStream,temp, ' ')){
+        Perceptual_flow.push_back(temp);
+    }
+    for(char i: phrase){
+        std::string t(1, i);
+        Cognitive_flow.push_back(t);
+        Motor_flow.push_back(t);
+    }
+    for(auto i:Perceptual_flow){
+        Perceptual.push_back(new Operator(i, Perceptual_Duration, "Perceptual" ));
+    }
+    //adding p2p dependency
+    for(int i = 0; i<(int)Perceptual.size()-1; i++){
+        Perceptual[i]->push(Perceptual[i+1]);
+    }
+    //init motor and cog
+    Cognitive.push_back(new Operator(Cognitive_flow[0], 0.0, "Cognitive"));
+    Motor.push_back(new Operator(Motor_flow[0], 0.0, "Motor"));
+    for(int i=1; i<(int)Cognitive.size(); i++){
+        double motor_time = motors.Time(Cognitive_flow[i-1],Cognitive_flow[i]);
+        double cog_time = cogs.Time(Cognitive_flow[i-1],Cognitive_flow[i]);
+        Cognitive.push_back(new Operator(Cognitive_flow[i], cog_time, "Cognitive"));
+        Motor.push_back(new Operator(Motor_flow[i], motor_time, "Motor"));
+        //adding m2m dependency
+        Motor[i-1]->push(Motor[i]);
+    }
+    for(int i=0; i<(int)Cognitive.size(); i++){
+        //adding c2m depency
+        Cognitive[i]->push(Motor[i]);
+    }
+    //adding m2c depency
+    for(int i=0; i<(int)Cognitive.size()-1; i++){
+        if(if_samehand(Motor_flow[i], Motor_flow[i+1])){
+            Motor[i]->push(Cognitive[i+1]);
+        }
+    }
+
+    //adding words to cog
+    int count{};
+    for(int i = 0; i<(int)Perceptual_flow.size(); i++){
+        std::cout<<"count = "<<count<<std::endl;
+        words_location.push_back(count);
+        count++;
+        count += Perceptual_flow[i].length();
+    }
+    for(int i:words_location){
+        std::cout<<" "<<i<<std::endl;
+    }
+    std::cout<<std::endl;
+    //adding cog operators for words
+    for(int i = 0; i<(int)Perceptual_flow.size(); i++){
+        Cognitive.insert(Cognitive.begin()+words_location[i], new Operator(Perceptual_flow[i], Cognitive_Duration, "Cognitive"));
+    }
+
+    //adding p2c dependency
+    for(int i = 0; i<(int)Perceptual_flow.size(); i++){
+        Perceptual[i]->push(Cognitive[words_location[i]]);
+    }
+    //adding c2p dependency
+    for(int i = 1; i+2<(int)Perceptual_flow.size(); i++){
+        Cognitive[words_location[i]-1]->push(Perceptual[i+2]);
+    }
+}
+
+void Method::initDict() {
+    std::ifstream file("Keyboard.csv");
+    std::string line;
+    CSVRow row;
+    std::getline(file, line);
+    double min = 100;
+    double max = 0;
+    while (file >> row)
+    {
+        dict.insert(row);
+        if (row.ID < min && row.ID != 0)
+            min = row.ID;
+        if (row.ID > max)
+            max = row.ID;
+    }
+    //std::cout << "the ID range is (" << min << ", " << max << ")";
+}
+
 double Method::duration() {
     double duration = 0.0;
     for (std::list<Operator*>::iterator iterator = operators.begin(), end = operators.end(); iterator != end; ++iterator) {
@@ -20,14 +130,14 @@ double Method::duration() {
 }
 
 bool Method::ifValid(std::string input){
-    for(int i = 0; i<input.length(); i++){
+    for(int i = 0; i<(int)input.length(); i++){
         if(input[i]!=' ' && !isalpha(input[i])) {
-            cout<<"!!!!!warning!!!!!!"<<std::endl;
-            cout<<"This program only simulates alphabetic input string, please remove any other characters and try again."<<std::endl;
+            std::cout<<"!!!!!warning!!!!!!"<<std::endl;
+            std::cout<<"This program only simulates alphabetic input string, please remove any other characters and try again."<<std::endl;
             return false;
         }
-        else return true;
     }
+    return true;
 }
 
 bool Method::if_samehand(std::string a, std::string b){
@@ -47,75 +157,21 @@ bool Method::if_samehand(std::string a, std::string b){
 }
 
 
-    Method::Method(double motor_duration){//set up the schedule chart
-        real_motor_duration = motor_duration;
-        for(std::string i : Motor_flow){
-            Recognitive.push_back(new Operator(i,Recognitive_Duration, "recognitive"));
-        }
-        for(std::string i : Motor_flow){
-            Motor.push_back(new Operator(i, real_motor_duration, "motor"));
-        }
-        //std::cout<<"finish Rec and Motor intialization"<<std::endl;
-        //std::cout<<"their sizes are:"<<Recognitive.size()<<" "<<Motor.size()<<std::endl;
 
-
-        //adding dependency, a this step, cognitive flow is exactly the same as motor flow(withour the LTM process)
-        //1. cognitive to cognitive
-
-        //std::cout<<"Adding cog to cog dependency"<<std::endl;
-        for(int i = 0; i<Motor_flow_size-1;i++){
-            Recognitive[i]->set_next_cog(Recognitive[i+1]);
-        }
-        //2. cognitive to motor
-        //std::cout<<"Adding cog to motor dependency"<<std::endl;
-        for(int i = 0; i<Motor_flow_size;i++){
-            Recognitive[i]->set_next_motor(Motor[i]);
-        }
-        //3. motor to cognitive
-        //std::cout<<"Adding motor to cog dependency"<<std::endl;
-        for(int i = 0; i<Motor_flow_size-1;i++){
-            if(if_samehand(Motor_flow[i],Motor_flow[i+1])){
-                Motor[i]->set_next_cog(Recognitive[i+1]);
-            }
-        }
-        //4. motor to motor
-        //std::cout<<"Adding motor to motor dependency"<<std::endl;
-        for(int i = 0; i<Motor_flow_size-1;i++){
-            Motor[i]->set_next_motor(Motor[i+1]);
-        }
-
-        //Adding LTM process into the cognitive flow ("One_")
-        //this part is hardcoded
-        std::vector<int> LTM_places{0,6,13,20,25,32,38,43,49};
-        for(int i=0; i<(int)LTM_places.size(); i++){
-            //std::cout<<"adding LTM dependency at"<<Perceptual_flow[i]<<std::endl;
-            Recognitive.insert(Recognitive.begin()+LTM_places[i], new Operator(Perceptual_flow[i], Recognitive_Duration, "recognitive"));
-            if(i==0){
-                Recognitive[0]->set_next_cog(Recognitive[1]);
-            }
-            else{
-                int p = LTM_places[i];
-                Recognitive[p]->set_next_cog(Recognitive[p+1]);
-                Recognitive[p-1]->set_next_cog(Recognitive[p]);
-            }
-        }
-        //std::cout<<"finish LTM intialization"<<std::endl;
-        //std::cout<<"their sizes are:"<<Recognitive.size()<<" "<<Motor.size()<<std::endl;
-    }
+Method::Method(bool ifNovice){
+    initDict();
+    cogs = Emma(dict, ifNovice);
+    motors = Fitts(dict);
+}
 
 
 void  Method::find_path(){
-        //iterate through the first cognitive task
-        //std::cout<<"starting finding path "<<Recognitive.size()<<std::endl;
-        for(Operator* i: Recognitive){
-            i->update();
-        }
-        Operator* it = Motor.back();
-        while(it->back()!=nullptr){
-            operators.push_front(it);
-            it = it->back();
-        }
-        Operator* first = new Operator("Once_", Perceptual_Duration, "perceptual");
-        operators.push_front(first);
+      // 
+      Perceptual[0]->update();
+      Operator* p = Perceptual[0];
+      while(p){
+          operators.push_back(p);
+          p = p->back();
+      }
     }
 

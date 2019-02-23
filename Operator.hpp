@@ -32,11 +32,8 @@ class Operator
             //std::cout << type << " operator " << "handles --" << chunck << "-- at " << time_elapsed() << std::endl;
             return Real_duration;
         }
-        virtual void set_next_motor(Operator* op){
-            Next_motor = op;
-        }
-        virtual void set_next_cog(Operator* op){
-            Next_cog = op;
+        virtual void push(Operator* op){
+            next.push_back(op);
         }
         void set_backtrace(Operator* op){
             backtrace = op;
@@ -44,27 +41,24 @@ class Operator
         Operator* back(){
             return backtrace;
         }
+        double update(){
+            if(visited) return highest_duration + Real_duration;
+            else{
+                double max = 0.0;
+                for(auto i:next){
+                    double t;
+                    t = i->update();
+                    if(t>max){
+                        backtrace = i;
+                        max = t;
+                    }
+                }
+                visited = true;
+                return max + Real_duration; 
+            }
+        }
         double time_elapsed(){
             return highest_duration;
-        }
-        virtual void update(int t=1){//update next t items through the linked relation
-            //the update order is strictly enforced:
-            //1. update next recognitive operator
-            //2. update motor operator
-            if(t<0) return;
-                if(Next_cog) Next_cog->get_update(this, highest_duration+duration());
-                if(Next_motor){
-                    Next_motor->get_update(this, highest_duration+duration());
-                    Next_motor->update(t-1);
-                }
-            }
-        virtual bool get_update(Operator* op, double new_duration){//get update request from previous operator in time
-            if(new_duration>highest_duration){//determine if accept update
-                backtrace = op;
-                highest_duration = new_duration;
-                return true;
-            }
-            return false;
         }
         virtual std::string content(){
             return type+":"+chunck;
@@ -74,9 +68,9 @@ class Operator
         }
 
     protected:
-        Operator* Next_cog = nullptr;
-        Operator* Next_motor = nullptr;
-        Operator* backtrace = nullptr;
+        std::vector<Operator*> next;
+        Operator* backtrace;
+        bool visited = false;
         double highest_duration=0.0;
         double Real_duration = 340.0;
         std::string chunck;

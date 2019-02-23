@@ -1,29 +1,30 @@
+#ifndef Constants_hpp
+#define Constants_hpp
+
 #include <iostream>
 #include <cmath>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
 
-#ifndef Constants_hpp
-#define Constants_hpp
 //Constants
-extern const double tau;
-extern const double d ;
-extern const double F;
-extern const double f;
-extern const double sigma_M;
-extern const double alpha;
-extern const double sigma_U;
-extern const double  K;
-extern const double  k;
-extern const double  t_prep;
-extern const double  t_exec;
-extern const double  t_sacc;
-extern const double  sigma_V;
+extern double tau;
+extern double d ;
+extern double F;
+extern double f;
+extern double sigma_M;
+extern double alpha;
+extern double sigma_U;
+extern double  K;
+extern double  k;
+extern double  t_prep;
+extern double  t_exec;
+extern double  t_sacc;
+extern double  sigma_V;
 extern std::unordered_map<char,double> eng_freq;
-extern const double degreePermm;
-extern const double a;
-extern const double b;
+extern double degreePermm;
+extern double a;
+extern double b;
 
 
 

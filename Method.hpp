@@ -13,13 +13,16 @@
 #include <list>
 #include <set>
 #include <string>
+#include <sstream>
 #include <cctype>
 #include "Operator.hpp"
+#include "FittsLaw.hpp"
+#include "Emma.hpp"
 
 #define Reconitive_flow_size 54
 #define Motor_flow_size 45
 #define Perceptual_Duration 340
-#define Recognitive_Duration 50
+#define Cognitive_Duration 50
 #define Motor_Duration 50
 /*  ASSUMPTION: This typist follows the priciples of Assumption 1-7 in the TYPIST paper, with the following modifications:
   In Assumption 2b, the typist uses both hands, with one finger for each hand in typing
@@ -28,7 +31,7 @@
   In Assumption 5, 
   In Assumption 6, 
     Perceptual duration is 340ms
-    Cognitive duration for fetch a word is 50 ms
+    Cognitive duration for fetching a word is 50 ms
     Cognitive duration for single key is keyboard search time
     Motor duration is fitts' law movement time
   !!!The only difference bewtween different typists(methods) is their keyboard search duration
@@ -56,9 +59,8 @@ class Method
          * Method to parse a phrase into a method. Subclasses should implement their specific strategy and store it as a list of operators.
          */
         Method(bool ifNovice);//init schedule chart
-        void process(std::string phrase){
-            // encode given phrase into schedule chart
-        }
+        void process(std::string phrase); // encode given phrase into schedule chart
+        void initDict();
         bool ifValid(std::string input);
         void find_path();// find path from schedule chart
         bool if_samehand(std::string a, std::string b); //determine if a and b are typed by the same hand
@@ -66,14 +68,27 @@ class Method
          * Method to compute duration (in seconds) that would take to execute the method.
          */
         double duration();
+        std::string convert2lower(std::string str){
+            std::string lower;
+            for(int i=0; i<(int) str.length(); i++){
+                lower += tolower(str[i]);
+            }
+            return lower;
+        }
     protected:
         std::vector<Operator*> Perceptual;
-        std::vector<Operator*> Recognitive;
+        std::vector<Operator*> Cognitive;
         std::vector<Operator*> Motor;
         std::vector<std::string> Perceptual_flow;
-        std::vector<std::string> Recognitive_flow;
+        std::vector<std::string> Cognitive_flow;
         std::vector<std::string> Motor_flow;
+        std::vector<int> words_location;
+        Dict dict;
+        Emma cogs;
+        Fitts motors;
 };
+
+std::istream &operator>>(std::istream &str, CSVRow &data);
 
 class NoviceMethod: public Method
 {
