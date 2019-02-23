@@ -36,11 +36,13 @@ double Emma::Time(std::string from, std::string to)
     char p = from[0];
     double encodingTime = Encoding(eng_freq[p], datum.degree);
     double LTMTime = LTM();
+    /*
     if(Novice)
         std::cout<<"Novice";
     else
         std::cout<<"Expert ";
     std::cout<<"Emma takes "<< encodingTime<< " "<< LTMTime<<std::endl;
+    */
 
     return 1000*(encodingTime + LTMTime);
 }

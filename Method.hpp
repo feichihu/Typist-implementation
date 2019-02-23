@@ -25,6 +25,10 @@
 #define Cognitive_Duration 50
 #define Motor_Duration 50
 /*  ASSUMPTION: This typist follows the priciples of Assumption 1-7 in the TYPIST paper, with the following modifications:
+We use a 246mm * 185mm (12mm) with resolution 1024 * 768 tablet for transcribe task.
+This time any typist need to do visual searches on keyboard for each single key.
+Therefore, the typing time is significantly longer than previous settings in Assigment1.
+Also, since its a tablet, moving fingers takes longer time than on phones. 
   In Assumption 2b, the typist uses both hands, with one finger for each hand in typing
   In Assumption 3, the perceptual processor stays 3 chunks ahead
   In Assumption 4, the typist use a word as a chunk and there is no restricted view issue
@@ -58,32 +62,35 @@ class Method
         /**
          * Method to parse a phrase into a method. Subclasses should implement their specific strategy and store it as a list of operators.
          */
-        Method(bool ifNovice);//init schedule chart
+        Method(bool ifNovice);//init method
         void process(std::string phrase); // encode given phrase into schedule chart
-        void initDict();
-        bool ifValid(std::string input);
+        void initDict();//initialize (from, to) dictionary for distance and other data
+        bool ifValid(std::string input);//detect if input is valid string
         void find_path();// find path from schedule chart
         bool if_samehand(std::string a, std::string b); //determine if a and b are typed by the same hand
         /**
          * Method to compute duration (in seconds) that would take to execute the method.
          */
         double duration();
-        std::string convert2lower(std::string str){
-            std::string lower;
-            for(int i=0; i<(int) str.length(); i++){
-                lower += tolower(str[i]);
-            }
-            return lower;
-        }
+        std::string convert2lower(std::string str);//convert string to lowercase
     protected:
+        //Pointers for each operator
         std::vector<Operator*> Perceptual{};
         std::vector<Operator*> Cognitive{};
         std::vector<Operator*> Motor{};
+
+        //Characters and words in each operator
         std::vector<std::string> Perceptual_flow{};
         std::vector<std::string> Cognitive_flow{};
         std::vector<std::string> Motor_flow{};
+
+        //location of whole words in cognitive operators
         std::vector<int> words_location{};
+
+        //distance and IDs for each key pair
         Dict dict{};
+
+        //instance of Emma and Fitts
         Emma cogs;
         Fitts motors;
 };

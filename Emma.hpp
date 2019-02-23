@@ -23,7 +23,7 @@
     2.b There is not second fixation in any case. Anyone lands on the target in one go. 
     2.c Therefore, VSTM is useless in this model.
     2.d Assume we are using a tablet PC for typing. According to the data in this paper: https://core.ac.uk/download/pdf/11031705.pdf
-        We use a 246mm * 185mm (12mm) with resolution 1024 * 768 tablet
+        We use a 246mm * 185mm (12inch) with resolution 1024 * 768 tablet
         Assume length data in  keyboard.csv is in mm
         1 pixel = 0.028 degrees.
         1 mm = 4.16 pixels = 1.165 degrees.
@@ -41,6 +41,7 @@ class Emma
     double Time(std::string from, std::string to); // This function inputs (from, to) pair and return the keyboard searching time
     inline double Encoding(double freq, double epsilon);
     inline double LTM();
+
   private:
     Dict dict{};
     bool Novice{};

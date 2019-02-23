@@ -22,58 +22,21 @@
 class Operator
 {
     public:
-        Operator(std::string word, double duration, std::string t) {
-            chunck = word;
-            Real_duration = duration;
-            type = t;
-        }
-        virtual ~Operator(){ }
-        virtual double duration(){ 
-            //std::cout << type << " operator " << "handles --" << chunck << "-- at " << time_elapsed() << std::endl;
-            return Real_duration;
-        }
-        virtual void push(Operator* op){
-            next.push_back(op);
-        }
-        void set_backtrace(Operator* op){
-            backtrace = op;
-        }
-        Operator* back(){
-            return backtrace;
-        }
-        void print(){
-           std::cout<<type<<" operator works on "<<chunck<<" with duration"<<Real_duration<<" Highest_duration"<<highest_duration<<std::endl; 
-        }
-        double update(){
-            if(visited) return highest_duration + Real_duration;
-            else{
-                for(auto i:next){
-                    double t;
-                    t = i->update();
-                    if(t>highest_duration){
-                        backtrace = i;
-                        highest_duration = t;
-                    }
-                }
-                print();
-                visited = true;
-                return highest_duration + Real_duration; 
-            }
-        }
-        double time_elapsed(){
-            return highest_duration;
-        }
-        virtual std::string content(){
-            return type+":"+chunck;
-        }
-        bool if_motor(){
-            return type=="motor";
-        }
+        Operator(std::string word, double duration, std::string t);//init, where duration is hardcoded or given by Emma/Fitts
+        virtual ~Operator();
+        virtual double duration();
+        virtual void push(Operator* op);//adding dependency
+        void set_backtrace(Operator* op);//backtrace in the algorithm
+        Operator* back();
+        void print();//print essential information
+        double update();//updata data related to critical path
+        double time_elapsed();
+        virtual std::string content();//give basic information of the operator
 
     protected:
-        std::vector<Operator*> next{};
-        Operator* backtrace{};
-        bool visited = false;
+        std::vector<Operator*> next{};//dependency
+        Operator* backtrace{};//previous operator in the critical path
+        bool visited = false;//if critical path to this operator has been computed
         double highest_duration=0.0;
         double Real_duration = 340.0;
         std::string chunck;

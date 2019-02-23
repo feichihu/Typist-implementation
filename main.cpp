@@ -20,7 +20,7 @@ int main(int argc, const char *argv[])
     bool pass = 0;
     while (!pass)
     {
-        std::cin >> phrase;
+        getline(std::cin, phrase);
         if (phrase == "0")
         {
             phrase = phrase0;
