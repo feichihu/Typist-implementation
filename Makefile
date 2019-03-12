@@ -15,5 +15,9 @@ f:
 f: FittsLaw.cpp Constants.hpp
 	$(CXX) $(CXXFLAGS) FittsLaw.cpp -o f
 
+b:
+b:	benchmark.cpp Constants.hpp
+	$(CXX) $(CXXFLAGS) benchmark.cpp -o b
+
 clean:
 	rm  -f typist 
