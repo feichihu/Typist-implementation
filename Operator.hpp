@@ -22,61 +22,21 @@
 class Operator
 {
     public:
-        Operator(std::string word, double duration, std::string t) {
-            chunck = word;
-            Real_duration = duration;
-            type = t;
-        }
-        virtual ~Operator(){ }
-        virtual double duration(){ 
-            //std::cout << type << " operator " << "handles --" << chunck << "-- at " << time_elapsed() << std::endl;
-            return Real_duration;
-        }
-        virtual void set_next_motor(Operator* op){
-            Next_motor = op;
-        }
-        virtual void set_next_cog(Operator* op){
-            Next_cog = op;
-        }
-        void set_backtrace(Operator* op){
-            backtrace = op;
-        }
-        Operator* back(){
-            return backtrace;
-        }
-        double time_elapsed(){
-            return highest_duration;
-        }
-        virtual void update(int t=1){//update next t items through the linked relation
-            //the update order is strictly enforced:
-            //1. update next recognitive operator
-            //2. update motor operator
-            if(t<0) return;
-                if(Next_cog) Next_cog->get_update(this, highest_duration+duration());
-                if(Next_motor){
-                    Next_motor->get_update(this, highest_duration+duration());
-                    Next_motor->update(t-1);
-                }
-            }
-        virtual bool get_update(Operator* op, double new_duration){//get update request from previous operator in time
-            if(new_duration>highest_duration){//determine if accept update
-                backtrace = op;
-                highest_duration = new_duration;
-                return true;
-            }
-            return false;
-        }
-        virtual std::string content(){
-            return type+":"+chunck;
-        }
-        bool if_motor(){
-            return type=="motor";
-        }
+        Operator(std::string word, double duration, std::string t);//init, where duration is hardcoded or given by Emma/Fitts
+        virtual ~Operator();
+        virtual double duration();
+        virtual void push(Operator* op);//adding dependency
+        void set_backtrace(Operator* op);//backtrace in the algorithm
+        Operator* back();
+        void print();//print essential information
+        double update();//updata data related to critical path
+        double time_elapsed();
+        virtual std::string content();//give basic information of the operator
 
     protected:
-        Operator* Next_cog = nullptr;
-        Operator* Next_motor = nullptr;
-        Operator* backtrace = nullptr;
+        std::vector<Operator*> next{};//dependency
+        Operator* backtrace{};//previous operator in the critical path
+        bool visited = false;//if critical path to this operator has been computed
         double highest_duration=0.0;
         double Real_duration = 340.0;
         std::string chunck;
