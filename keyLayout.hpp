@@ -75,8 +75,12 @@ class Corpus{
         std::string line;
         TXTRow row;
         std::getline(file, line);
+        int count{};
         while (file >> row)
         {
+            count++;
+            //TODO
+            if(count>2000) break;
             wordlist.push_back(row.data);
         }
     }
