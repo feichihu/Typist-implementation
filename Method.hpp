@@ -56,8 +56,6 @@ Also, since its a tablet, moving fingers takes longer time than on phones.
 
 class Method
 {
-    private:
-        std::list<Operator*> operators;
     
     public:
         /**
@@ -79,6 +77,7 @@ class Method
         std::string convert2lower(std::string str);//convert string to lowercase
     protected:
         //Pointers for each operator
+        std::vector<Operator*> operators;
         std::vector<Operator*> Perceptual{};
         std::vector<Operator*> Cognitive{};
         std::vector<Operator*> Motor{};

@@ -17,6 +17,8 @@ Operator::Operator(std::string word, double duration, std::string t)
 
 Operator::~Operator() {
     next.clear();
+    backtrace = nullptr;
+    //std::cout<<this<<std::endl;
 }
 
 double Operator::duration()

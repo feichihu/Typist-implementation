@@ -146,7 +146,7 @@ double Method::duration()
 {
     find_path();
     double duration = 0.0;
-    for (std::list<Operator *>::iterator iterator = operators.begin(), end = operators.end(); iterator != end; ++iterator)
+    for (std::vector<Operator *>::iterator iterator = operators.begin(), end = operators.end(); iterator != end; ++iterator)
     {
         duration += (*iterator)->duration();
         //std::cout << "duration:" << duration << std::endl;
@@ -205,15 +205,36 @@ void Method::find_path()
 }
 
 void Method::clear(){
+    /*
+        std::cout<<" Perceptual Mem: "<<std::endl;
     for(auto i:Perceptual){
-        delete i;
+        std::cout<<" "<<i<<" "<<std::endl;
     }
+        std::cout<<"#################"<<std::endl;
+        std::cout<<" Cognitive Mem: "<<std::endl;
     for(auto i:Cognitive){
-        delete i;
+        std::cout<<" "<<i<<" "<<std::endl;
     }
+        std::cout<<"#################"<<std::endl;
+        std::cout<<" Motor Mem: "<<std::endl;
     for(auto i:Motor){
-        delete i;
+        std::cout<<" "<<i<<" "<<std::endl;
     }
+        std::cout<<"#################"<<std::endl;
+    */
+    for(auto i=Perceptual.begin(); i<Perceptual.end(); i++){
+        //std::cout<<"delete"<<(*i)<<" ";
+        delete (*i);
+    }
+    for(auto i=Cognitive.begin(); i<Cognitive.end(); i++){
+        //std::cout<<"delete"<<(*i)<<" ";
+        delete (*i);
+    }
+    for(auto i=Motor.begin(); i<Motor.end(); i++){
+        //std::cout<<"delete"<<(*i)<<" ";
+        delete (*i);
+    }
+    operators.clear();
     Perceptual.clear();
     Cognitive.clear();
     Motor.clear();
@@ -239,9 +260,9 @@ long Method::benchmarkSingle(singleCorpusEntry p){
     process(p.word);
     long weight{};
     weight = (long)duration(); 
-    std::cout<<weight<<std::endl;
+    //std::cout<<weight<<std::endl;
     weight *= (long)p.freq;
-    std::cout<<weight<<std::endl;
+    //std::cout<<weight<<std::endl;
     clear();
     return weight;
 }
