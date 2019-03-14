@@ -14,6 +14,14 @@ std::istream &operator>>(std::istream &str, CSVRow &data)
     return str;
 }
 
+Method::Method(bool ifNovice, keyLayout &k):corpus()
+{
+    initDict();
+    cogs = Emma(dict, ifNovice);
+    motors = Fitts(dict);
+    key = k;
+}
+
 void Method::process(std::string phrase)
 {
     //transform into lower case
@@ -143,7 +151,6 @@ double Method::duration()
         duration += (*iterator)->duration();
         //std::cout << "duration:" << duration << std::endl;
     }
-    duration = duration / 1000.0; //convert ms to s
     return duration;
 }
 
@@ -163,6 +170,8 @@ bool Method::ifValid(std::string input)
 
 bool Method::if_samehand(std::string a, std::string b)
 {
+    a = key.map(a);
+    b = key.map(b);
     std::set<std::string> left = {"q", "w", "e", "r", "t", "a", "s", "d", "f", "g", "z", "x", "c", "v", "b"};
     std::set<std::string> right = {"y", "h", "n", "u", "j", "m", "i", "k", "o", "p", "l", ",", ".", ";", ":"};
     int A{}, B{};
@@ -181,12 +190,7 @@ bool Method::if_samehand(std::string a, std::string b)
         return false; // keys in different hands
 }
 
-Method::Method(bool ifNovice)
-{
-    initDict();
-    cogs = Emma(dict, ifNovice);
-    motors = Fitts(dict);
-}
+
 
 void Method::find_path()
 {
@@ -200,6 +204,26 @@ void Method::find_path()
     }
 }
 
+void Method::clear(){
+    for(auto i:Perceptual){
+        delete i;
+    }
+    for(auto i:Cognitive){
+        delete i;
+    }
+    for(auto i:Motor){
+        delete i;
+    }
+    Perceptual.clear();
+    Cognitive.clear();
+    Motor.clear();
+    Perceptual_flow.clear();
+    Cognitive_flow.clear();
+    Motor_flow.clear();
+    words_location.clear();
+
+}
+
 std::string Method::convert2lower(std::string str)
 {
     std::string lower;
@@ -208,4 +232,24 @@ std::string Method::convert2lower(std::string str)
         lower += tolower(str[i]);
     }
     return lower;
+}
+
+
+long Method::benchmarkSingle(singleCorpusEntry p){
+    process(p.word);
+    long weight{};
+    weight = (long)duration(); 
+    std::cout<<weight<<std::endl;
+    weight *= (long)p.freq;
+    std::cout<<weight<<std::endl;
+    clear();
+    return weight;
+}
+
+long Method::benchmark(){
+    long weight{};
+    for(singleCorpusEntry i:corpus.wordlist){
+        weight += benchmarkSingle(i);
+    }
+    return weight;
 }

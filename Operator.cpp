@@ -15,7 +15,9 @@ Operator::Operator(std::string word, double duration, std::string t)
     type = t;
 }
 
-Operator::~Operator() {}
+Operator::~Operator() {
+    next.clear();
+}
 
 double Operator::duration()
 {

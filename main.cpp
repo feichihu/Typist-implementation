@@ -9,7 +9,7 @@
 #include <iostream>
 #include "Method.hpp"
 
-bool ifValid(std::string input);
+Dict dict;
 
 int main(int argc, const char *argv[])
 {
