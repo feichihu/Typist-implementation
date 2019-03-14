@@ -8,7 +8,7 @@
 
 #include "Operator.hpp"
 
-Operator::Operator(std::string word, double duration, std::string t)
+Operator::Operator(std::string word, int duration, std::string t)
 {
     chunck = word;
     Real_duration = duration;
@@ -21,7 +21,7 @@ Operator::~Operator() {
     //std::cout<<this<<std::endl;
 }
 
-double Operator::duration()
+int Operator::duration()
 {
     //std::cout << type << " operator " << "handles --" << chunck << "-- at " << time_elapsed() << std::endl;
     return Real_duration;
@@ -47,7 +47,7 @@ void Operator::print()
     std::cout << type << " operator works on " << chunck << " with duration" << Real_duration << " Highest_duration" << highest_duration << std::endl;
 }
 
-double Operator::update()
+int Operator::update()
 {
     if (visited)
         return highest_duration + Real_duration;
@@ -55,7 +55,7 @@ double Operator::update()
     {
         for (auto i : next)
         {
-            double t;
+            int t;
             t = i->update();
             if (t > highest_duration)
             {
@@ -69,7 +69,7 @@ double Operator::update()
     }
 }
 
-double Operator::time_elapsed()
+int Operator::time_elapsed()
 {
     return highest_duration;
 }

@@ -69,8 +69,8 @@ void Method::process(std::string phrase)
     Motor.push_back(new Operator(Motor_flow[0], Motor_Duration, "Motor"));
     for (int i = 1; i < (int)Cognitive_flow.size(); i++)
     {
-        double motor_time = motors.Time(Cognitive_flow[i - 1], Cognitive_flow[i]);
-        double cog_time = cogs.Time(Cognitive_flow[i - 1], Cognitive_flow[i]);
+        int motor_time = (int)motors.Time(Cognitive_flow[i - 1], Cognitive_flow[i]);
+        int cog_time = (int)cogs.Time(Cognitive_flow[i - 1], Cognitive_flow[i]);
         Cognitive.push_back(new Operator(Cognitive_flow[i], cog_time, "Cognitive"));
         Motor.push_back(new Operator(Motor_flow[i], motor_time, "Motor"));
         //adding m2m dependency
@@ -129,8 +129,8 @@ void Method::initDict()
     std::string line;
     CSVRow row;
     std::getline(file, line);
-    double min = 100;
-    double max = 0;
+    int min = 100;
+    int max = 0;
     while (file >> row)
     {
         dict.insert(row);
@@ -142,10 +142,10 @@ void Method::initDict()
     //std::cout << "the ID range is (" << min << ", " << max << ")";
 }
 
-double Method::duration()
+int Method::duration()
 {
     find_path();
-    double duration = 0.0;
+    int duration = 0;
     for (std::vector<Operator *>::iterator iterator = operators.begin(), end = operators.end(); iterator != end; ++iterator)
     {
         duration += (*iterator)->duration();

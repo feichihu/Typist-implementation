@@ -73,7 +73,7 @@ class Method
         /**
          * Method to compute duration (in seconds) that would take to execute the method.
          */
-        double duration();
+        int duration();
         std::string convert2lower(std::string str);//convert string to lowercase
     protected:
         //Pointers for each operator
