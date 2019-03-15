@@ -17,7 +17,7 @@ int main()
 
     // init layout
     keyLayout p;
-    p.shuffle();
+    //p.shuffle();
     keyLayout newp(p);
     keyLayout qwerty;
 
@@ -50,10 +50,12 @@ int main()
             std::cout << "+";
             newp = p;
             newp.swap();
+            newp.swap();
+            newp.swap();
             expertMethod.updateLayout(newp);
             newweight = expertMethod.benchmark();
-            double power = 100 * (double)(weight - newweight) / (double)weight;
-            std::cout << power;
+            double power = 1000 * (double)(weight - newweight) / (double)weight;
+            std::cout << exp(power);
             std::bernoulli_distribution acc(exp(power));
             std::default_random_engine gen;
             if (acc(gen))
