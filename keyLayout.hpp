@@ -156,10 +156,10 @@ class keyLayout{
             std::cout<<layout[Idx(qwertyLayout[10 + i])]<<' ';
         }
         std::cout<<layout[Idx(qwertyLayout[18])]<<std::endl;
+        std::cout<<"  ";
         for(int i = 0; i < 6; i++){
             std::cout<<layout[Idx(qwertyLayout[19+i])]<<' ';
         }
-        std::cout<<"  ";
         std::cout<<layout[Idx(qwertyLayout[25])]<<std::endl;
     }
 

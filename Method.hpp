@@ -15,6 +15,7 @@
 #include <string>
 #include <sstream>
 #include <cctype>
+#include <random>
 #include "Operator.hpp"
 #include "FittsLaw.hpp"
 #include "Emma.hpp"
