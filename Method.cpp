@@ -22,6 +22,10 @@ Method::Method(bool ifNovice, keyLayout &k):corpus()
     key = k;
 }
 
+void Method::updateLayout(keyLayout &k){
+    key = k;
+}
+
 void Method::process(std::string phrase)
 {
     //transform into lower case
