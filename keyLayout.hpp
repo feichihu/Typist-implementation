@@ -59,7 +59,6 @@ class TXTRow //read a single row from wordlist.txt
     }
     singleCorpusEntry data;
 
-  private:
     std::string word;
     int freq;
 };
@@ -79,13 +78,15 @@ class Corpus{
         while (file >> row)
         {
             count++;
-            //TODO
+            totalWeight += row.freq;
+            //the whole corpus takes very long time
+            //for the purpose of demonstration, we take first 2000 words for illustration
             if(count>2000) break;
             wordlist.push_back(row.data);
         }
     }
 
-
+    long totalWeight{};
     std::vector<singleCorpusEntry> wordlist{};
 };
 

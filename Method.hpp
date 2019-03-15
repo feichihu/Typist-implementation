@@ -65,6 +65,7 @@ class Method
         Method(bool ifNovice, keyLayout &k);//init method
         void process(std::string phrase); // encode given phrase into schedule chart
         void clear();
+        long totalWeight();
         void updateLayout(keyLayout &k);
         long benchmarkSingle(singleCorpusEntry p);
         void initDict();//initialize (from, to) dictionary for distance and other data

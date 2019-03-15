@@ -11,24 +11,27 @@ std::istream &operator>>(std::istream &str, TXTRow &data)
 }
 int main()
 {
-    // read corpus
-
-    // init Dict
-
-    // init layout
     keyLayout p;
-    //p.shuffle();
+    p.shuffle();
     keyLayout newp(p);
     keyLayout qwerty;
 
     // pass in layout
     // method.benchmark
-    Method expertMethod = ExpertMethod(p);
-    long weight = expertMethod.benchmark();
-    std::cout << "random total weight is" << weight << std::endl;
-    expertMethod.updateLayout(qwerty);
+    Method expertMethod = ExpertMethod(qwerty);
+    Method noviceMethod = NoviceMethod(qwerty);
     long qwerty_weight = expertMethod.benchmark();
-    std::cout << "qwerty total weight is" << qwerty_weight << std::endl;
+    long weight = expertMethod.benchmark();
+    long nweight = noviceMethod.benchmark();
+    std::cout << "qwerty expert upperbound is" << 60/ ((double)weight/expertMethod.totalWeight()/2000) << "wpm"<<std::endl;
+    std::cout << "qwerty novice upperbound is" << 60/ ((double)nweight/expertMethod.totalWeight()/2000) << "wpm"<<std::endl;
+    std::cout<<"start with layout"<<std::endl;
+    expertMethod = ExpertMethod(p);
+    noviceMethod = NoviceMethod(p);
+    weight = expertMethod.benchmark();
+    nweight = noviceMethod.benchmark();
+    std::cout << "start expert upperbound is" << 60/ ((double)weight/expertMethod.totalWeight()/2000) << "wpm"<<std::endl;
+    std::cout << "start novice upperbound is" << 60/ ((double)nweight/expertMethod.totalWeight()/2000) << "wpm"<<std::endl;
     p.printLayout();
 
     //simulated annealing
@@ -53,6 +56,7 @@ int main()
             newp.swap();
             newp.swap();
             expertMethod.updateLayout(newp);
+            noviceMethod.updateLayout(newp);
             newweight = expertMethod.benchmark();
             double power = 1000 * (double)(weight - newweight) / (double)weight;
             std::cout << exp(power);
@@ -69,6 +73,8 @@ int main()
                 std::cout << "no neigbor accepted" << std::endl;
         }
         bool pass = false;
+        //using novice weigh to optimize
+        //using weight here because upperbound in linear relation with weight
         while (!pass)
         {
             for (int i = 0; i < exploit; i++)
@@ -92,7 +98,13 @@ int main()
             }
         }
     }
-    std::cout << "final total weight is" << weight << std::endl;
-    std::cout << "qwerty total weight is" << qwerty_weight << std::endl;
+    //std::cout << "final total weight is" << weight << std::endl;
+    std::cout << "qwerty expert upperbound is" << qwerty_weight << std::endl;
+    noviceMethod.updateLayout(p);
+    nweight = noviceMethod.benchmark();
+    expertMethod.updateLayout(p);
+    weight = expertMethod.benchmark();
+    std::cout << "final expert upperbound is" << 60/ ((double)weight/expertMethod.totalWeight()/2000) << "wpm"<<std::endl;
+    std::cout << "final novice upperbound is" << 60/ ((double)nweight/noviceMethod.totalWeight()/2000) << "wpm"<<std::endl;
     p.printLayout();
 }

@@ -278,3 +278,7 @@ long Method::benchmark(){
     }
     return weight;
 }
+
+long Method::totalWeight(){
+    return  corpus.totalWeight;
+}
